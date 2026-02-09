@@ -62,6 +62,24 @@ jobs:
     - name: Sync Capacitor
       run: npx cap sync android
       
+    - name: Setup app icon
+      run: |
+        # تثبيت أداة Capacitor Assets
+        npm install -g @capacitor/assets
+        
+        # إنشاء مجلد resources إذا لم يكن موجود
+        mkdir -p resources
+        
+        # نسخ الأيقونة من المستودع إلى مجلد resources
+        # (تأكد من رفع icon.png في المستودع أولاً)
+        if [ -f "icon.png" ]; then
+          cp icon.png resources/icon.png
+          echo "✅ Icon found, generating assets..."
+          npx @capacitor/assets generate --android
+        else
+          echo "⚠️ No icon.png found, using default icon"
+        fi
+      
     - name: Fix Kotlin dependencies
       run: |
         echo "" >> android/build.gradle
