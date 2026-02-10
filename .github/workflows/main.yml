@@ -62,16 +62,36 @@ jobs:
     - name: Sync Capacitor
       run: npx cap sync android
       
+    - name: Add required Android permissions
+      run: |
+        MANIFEST="android/app/src/main/AndroidManifest.xml"
+        
+        # نسخة احتياطية
+        cp $MANIFEST ${MANIFEST}.backup
+        
+        # إضافة الصلاحيات قبل <application>
+        awk '/<application/ { 
+          print "    <!-- App Permissions -->"
+          print "    <uses-permission android:name=\"android.permission.INTERNET\" />"
+          print "    <uses-permission android:name=\"android.permission.RECORD_AUDIO\" />"
+          print "    <uses-permission android:name=\"android.permission.FOREGROUND_SERVICE\" />"
+          print "    <uses-permission android:name=\"android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK\" />"
+          print "    <uses-permission android:name=\"android.permission.MODIFY_AUDIO_SETTINGS\" />"
+          print "    <uses-permission android:name=\"android.permission.WAKE_LOCK\" />"
+          print "    <uses-permission android:name=\"android.permission.POST_NOTIFICATIONS\" />"
+          print "    <uses-permission android:name=\"android.permission.ACCESS_NETWORK_STATE\" />"
+          print ""
+        } 
+        { print }' ${MANIFEST}.backup > $MANIFEST
+        
+        echo "✅ Android permissions added"
+        echo "📄 AndroidManifest.xml:"
+        cat $MANIFEST
+      
     - name: Setup app icon
       run: |
-        # تثبيت أداة Capacitor Assets
         npm install -g @capacitor/assets
-        
-        # إنشاء مجلد resources إذا لم يكن موجود
         mkdir -p resources
-        
-        # نسخ الأيقونة من المستودع إلى مجلد resources
-        # (تأكد من رفع icon.png في المستودع أولاً)
         if [ -f "icon.png" ]; then
           cp icon.png resources/icon.png
           echo "✅ Icon found, generating assets..."
