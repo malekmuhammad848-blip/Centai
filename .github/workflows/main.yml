@@ -45,8 +45,8 @@ jobs:
         cat > capacitor.config.ts << 'EOF'
         import { CapacitorConfig } from '@capacitor/cli';
         const config: CapacitorConfig = {
-          appId: 'com.musicplatform.app',
-          appName: 'Music Platform',
+          appId: 'com.centmusic.app',
+          appName: 'Cent Music',
           webDir: 'dist',
           server: { androidScheme: 'https' }
         };
