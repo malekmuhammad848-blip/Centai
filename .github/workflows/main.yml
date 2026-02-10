@@ -88,6 +88,33 @@ jobs:
         echo "📄 AndroidManifest.xml:"
         cat $MANIFEST
       
+    - name: Update app name to Cent Music
+      run: |
+        STRINGS="android/app/src/main/res/values/strings.xml"
+        
+        if [ -f "$STRINGS" ]; then
+          # تحديث اسم التطبيق
+          sed -i 's|<string name="app_name">.*</string>|<string name="app_name">Cent Music</string>|' $STRINGS
+          sed -i 's|<string name="title_activity_main">.*</string>|<string name="title_activity_main">Cent Music</string>|' $STRINGS
+          
+          echo "✅ App name updated to 'Cent Music'"
+          echo "📄 strings.xml:"
+          cat $STRINGS
+        else
+          echo "⚠️ strings.xml not found, creating it..."
+          mkdir -p android/app/src/main/res/values
+          cat > $STRINGS << 'EOF'
+        <?xml version="1.0" encoding="utf-8"?>
+        <resources>
+            <string name="app_name">Cent Music</string>
+            <string name="title_activity_main">Cent Music</string>
+            <string name="package_name">com.centmusic.app</string>
+            <string name="custom_url_scheme">com.centmusic.app</string>
+        </resources>
+        EOF
+          echo "✅ strings.xml created with app name 'Cent Music'"
+        fi
+      
     - name: Setup app icon
       run: |
         npm install -g @capacitor/assets
